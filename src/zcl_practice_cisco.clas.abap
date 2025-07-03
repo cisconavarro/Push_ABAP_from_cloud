@@ -5,16 +5,41 @@ CLASS zcl_practice_cisco DEFINITION
 
   PUBLIC SECTION.
 
-    TYPES ty_amount TYPE p LENGTH 8 DECIMALS 2.
+**********************
+* TYPES DEFINITION
+**********************
+
+    TYPES: ty_amount TYPE p LENGTH 8 DECIMALS 2.
+    TYPES: ty_arts_parts TYPE zarts_parts.
+
+**********************
+* TYPES TABLE DEFINITION
+**********************
+
+    TYPES: ty_t_zarts_parts TYPE STANDARD TABLE OF ty_arts_parts WITH DEFAULT KEY.
+
+**********************
+* INTERFACES DEFINITION
+**********************
 
     INTERFACES if_oo_adt_classrun.
 
-* Static method to run the class
+**********************
+* STATIC METHODS
+**********************
+
     CLASS-METHODS:
+
+* 01 Arithmetic Operations
       arithmetic_operations  IMPORTING iv_numer1        TYPE dmbtr
                                        iv_numer2        TYPE dmbtr
                                        operator         TYPE char3
-                             RETURNING VALUE(rv_result) TYPE string.
+                             RETURNING VALUE(rv_result) TYPE string,
+
+
+* 02 Insert Rows to Table
+      append_rows_to_table IMPORTING is_values        TYPE zarts_parts
+                           RETURNING VALUE(rv_result) TYPE string.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -161,8 +186,8 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 **********************************************************************
     out->write( 'Example 8: String Expressions - concatenation Operator' ).
 
-    DATA: part1 TYPE string VALUE `Hello`,
-          part2 TYPE string VALUE `World`.
+    DATA: part1 TYPE string VALUE 'Hello',
+          part2 TYPE string VALUE 'World'.
 
     CLEAR text.
     text = part1 && part2.
@@ -273,6 +298,52 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
     out->write( '**********************************************************************' ).
 
+* Example 16: Append rows to standart table
+**********************************************************************
+    out->write( 'Example 16: Append rows to standart table' ).
+
+************ warning: This example will delete all rows in the table zarts_parts ************
+    DELETE FROM zarts_parts.
+************ warning: This example will delete all rows in the table zarts_parts ************
+
+    DATA: ls_values_part TYPE ty_arts_parts.
+    DATA(lv_timestamp) = cl_abap_context_info=>get_system_date( ).
+    DATA(lv_user) = cl_abap_context_info=>get_user_technical_name( ).
+
+    ls_values_part = VALUE #( descr                 = 'Agenda 2025 Azul Aqua'
+                              descr2                = 'Agenda 2025 Azul Aqua Hard Cover'
+                              color                 = 'Azul Aqua'
+                              piezas                = 10
+                              stock                 = 123
+                              url                   = 'https://lalibreteria.mx/cdn/shop/files/la-libreteria-agenda-2025-hard-cover-azul-aqua-03_700x.jpg?v=1720633282'
+                              created_by            = lv_user
+                              created_at            = lv_timestamp
+                              last_changed_by       = lv_user
+                              last_changed_at       = lv_timestamp
+                              local_last_changed_at = lv_timestamp ).
+
+    DATA(lv_append_result) = append_rows_to_table( ls_values_part ).
+    out->write( lv_append_result ).
+
+    CLEAR: ls_values_part, lv_append_result.
+
+    ls_values_part = VALUE #( descr                 = '2 Pack Libreta Barcelona'
+                              descr2                = '2 Pack Libreta Barcelona Refill'
+                              color                 = 'Marrón'
+                              piezas                = 3
+                              stock                 = 48
+                              url                   = 'https://lalibreteria.mx/cdn/shop/products/la-libreteria-libretas-9x20-5-barcelona-02_700x.jpg?v=1648007109'
+                              created_by            = lv_user
+                              created_at            = lv_timestamp
+                              last_changed_by       = lv_user
+                              last_changed_at       = lv_timestamp
+                              local_last_changed_at = lv_timestamp ).
+
+    lv_append_result = append_rows_to_table( ls_values_part ).
+    out->write( lv_append_result ).
+
+    out->write( '**********************************************************************' ).
+
   ENDMETHOD.
 
   METHOD arithmetic_operations.
@@ -315,6 +386,36 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
         rv_result = 'Invalid operator'.
 
     ENDCASE.
+
+  ENDMETHOD.
+
+  METHOD append_rows_to_table.
+
+    DATA(lt_arts_parts) = VALUE ty_t_zarts_parts( ).
+
+    SELECT MAX( id_art ) AS max_id FROM zarts_parts INTO @DATA(lv_max_id).
+    IF lv_max_id IS INITIAL.
+      lv_max_id = 1.
+    ELSE.
+      lv_max_id = lv_max_id + 1.
+    ENDIF.
+
+    APPEND VALUE #( client                  = sy-mandt
+                    id_art                  = |{ lv_max_id ALPHA = IN }|
+                    descr                   = is_values-descr
+                    descr2                  = is_values-descr2
+                    color                   = is_values-color
+                    piezas                  = is_values-piezas
+                    stock                   = is_values-stock
+                    url                     = is_values-url ) TO lt_arts_parts.
+
+    TRY.
+        MODIFY zarts_parts FROM TABLE @lt_arts_parts.
+        COMMIT WORK AND WAIT.
+        rv_result = |Row with ID { lv_max_id } inserted successfully|.
+      CATCH cx_sy_dynamic_osql_error INTO DATA(ol_sql_error).
+        rv_result = |Error inserting row: { ol_sql_error->get_text( ) }|.
+    ENDTRY.
 
   ENDMETHOD.
 
