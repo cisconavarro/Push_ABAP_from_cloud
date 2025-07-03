@@ -1,0 +1,119 @@
+@Metadata.layer: #CORE
+@UI: { headerInfo: { typeName: 'Employee',
+                     typeNamePlural: 'Employees',
+                     title: { type: #STANDARD,
+                              label: 'Employees',
+                              value: 'Name' }
+                    }
+     }
+
+annotate view zcds_empl_pc with
+{
+
+  @UI: { lineItem: [{ position: 01,
+                      label: 'Employee Number',
+                      importance: #HIGH }],
+                      identification: [{ position: 01,
+                      label: 'Employee Number' }] }
+  @UI.hidden: true
+  EmployeeNumber;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI.facet: [{ id: 'Employees',
+                purpose: #STANDARD,
+                type: #IDENTIFICATION_REFERENCE,
+                label: 'Employee' }]
+
+  @UI: { lineItem: [{ position: 02,
+                      label: 'Name',
+                      importance: #HIGH }],
+                      identification: [{ position: 02,
+                      label: 'Name' }] }
+  Name;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 03,
+                      label: 'Lastname',
+                      importance: #HIGH }],
+                      identification: [{ position: 03,
+                      label: 'Lastname' }] }
+
+  Lastname;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 04,
+                      label: 'Deparment',
+                      importance: #HIGH }],
+                      identification: [{ position: 04,
+                      label: 'Deparment' }] }
+  Department;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 05,
+                      label: 'Employee Code',
+                      importance: #HIGH }],
+                      identification: [{ position: 05,
+                      label: 'Employee Code' }] }
+  EmployeeCode;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 06,
+                      label: 'Email',
+                      importance: #MEDIUM }],
+                      identification: [{ position: 06,
+                      label: 'Email' }] }
+  Email;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 07,
+                      label: 'Status',
+                      importance: #LOW }],
+                      identification: [{ position: 07,
+                      label: 'Status' }] }
+  Status;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 08,
+                      label: 'Job Code',
+                      importance: #MEDIUM }],
+                      identification: [{ position: 08,
+                      label: 'Job Code' }] }
+  JobCode;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 09,
+                      label: 'Job Title',
+                      importance: #LOW }],
+                      identification: [{ position: 09,
+                      label: 'Job Title' }] }
+  Job_title;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 10,
+                      label: 'Start Date',
+                      importance: #LOW }],
+                      identification: [{ position: 10,
+                      label: 'Start Date' }] }
+  StartDate;
+
+  /////////////////////////////////////////////////////////////
+
+  @UI: { lineItem: [{ position: 11,
+                      label: 'End Date',
+                      importance: #LOW }],
+                      identification: [{ position: 11,
+                      label: 'End Date' }] }
+  EndDate;
+
+  /////////////////////////////////////////////////////////////
+
+}
