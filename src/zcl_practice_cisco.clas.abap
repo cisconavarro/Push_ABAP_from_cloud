@@ -9,7 +9,7 @@ CLASS zcl_practice_cisco DEFINITION
 * TYPES DEFINITION
 **********************
 
-    TYPES: ty_amount TYPE p LENGTH 8 DECIMALS 2.
+    TYPES: ty_amount     TYPE p LENGTH 8 DECIMALS 2.
     TYPES: ty_arts_parts TYPE zarts_parts.
 
 **********************
@@ -181,7 +181,6 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
     out->write( '**********************************************************************' ).
 
-
 * Example 8: String Expressions - concatenation Operator
 **********************************************************************
     out->write( 'Example 8: String Expressions - concatenation Operator' ).
@@ -271,7 +270,6 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
     out->write( '**********************************************************************' ).
 
-
 * Example 14: arithmetic operations modulo
 **********************************************************************
 
@@ -319,8 +317,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
                               created_by            = lv_user
                               created_at            = lv_timestamp
                               last_changed_by       = lv_user
-                              last_changed_at       = lv_timestamp
-                              local_last_changed_at = lv_timestamp ).
+                              last_changed_at       = lv_timestamp ).
 
     DATA(lv_append_result) = append_rows_to_table( ls_values_part ).
     out->write( lv_append_result ).
@@ -336,8 +333,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
                               created_by            = lv_user
                               created_at            = lv_timestamp
                               last_changed_by       = lv_user
-                              last_changed_at       = lv_timestamp
-                              local_last_changed_at = lv_timestamp ).
+                              last_changed_at       = lv_timestamp ).
 
     lv_append_result = append_rows_to_table( ls_values_part ).
     out->write( lv_append_result ).
@@ -400,14 +396,18 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
       lv_max_id = lv_max_id + 1.
     ENDIF.
 
-    APPEND VALUE #( client                  = sy-mandt
-                    id_art                  = |{ lv_max_id ALPHA = IN }|
-                    descr                   = is_values-descr
-                    descr2                  = is_values-descr2
-                    color                   = is_values-color
-                    piezas                  = is_values-piezas
-                    stock                   = is_values-stock
-                    url                     = is_values-url ) TO lt_arts_parts.
+    APPEND VALUE #( client          = sy-mandt
+                    id_art          = |{ lv_max_id ALPHA = IN }|
+                    descr           = is_values-descr
+                    descr2          = is_values-descr2
+                    color           = is_values-color
+                    piezas          = is_values-piezas
+                    stock           = is_values-stock
+                    url             = is_values-url
+                    created_by      = is_values-created_by
+                    created_at      = is_values-created_at
+                    last_changed_by = is_values-last_changed_by
+                    last_changed_at = is_values-last_changed_at ) TO lt_arts_parts.
 
     TRY.
         MODIFY zarts_parts FROM TABLE @lt_arts_parts.
