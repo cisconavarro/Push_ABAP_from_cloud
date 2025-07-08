@@ -304,13 +304,9 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 ************ warning: This example will delete all rows in the table zarts_parts ************
 
     DATA(ls_values_part) = VALUE ty_arts_parts( ).
-    DATA(lv_timestamp)   = VALUE timestamp( ).
 
-*   Get system date
-    lv_timestamp  = cl_abap_context_info=>get_system_date( ).
-
-*   Get system time
-    DATA(lv_time) = cl_abap_context_info=>get_system_time( ).
+    GET TIME STAMP FIELD DATA(lv_timestamp).
+    DATA(lv_user) = cl_abap_context_info=>get_user_technical_name( ).
 
     ls_values_part = VALUE #( descr                 = 'Agenda 2025 Azul Aqua'
                               descr2                = 'Agenda 2025 Azul Aqua Hard Cover'
@@ -318,16 +314,16 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
                               piezas                = 10
                               stock                 = 123
                               url                   = 'https://lalibreteria.mx/cdn/shop/files/la-libreteria-agenda-2025-hard-cover-azul-aqua-03_700x.jpg?v=1720633282'
-                              total_price           = '200.00'
-                              price_piece           = '200.00'
+                              total_price           = '230.00'
+                              price_piece           = '230.00'
                               currency_code         = 'CLP'
                               measure_unit          = 'FA'
                               quantity_per_unit     = 1
-                              local_created_by      = cl_abap_context_info=>get_user_technical_name( )
-                              local_created_at      = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }|
-                              local_last_changed_by = cl_abap_context_info=>get_user_technical_name( )
-                              local_last_changed_at = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }|
-                              last_change_at        = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }| ).
+                              local_created_by      = lv_user
+                              local_created_at      = lv_timestamp
+                              local_last_changed_by = lv_user
+                              local_last_changed_at = lv_timestamp
+                              last_change_at        = lv_timestamp ).
 
     DATA(lv_append_result) = append_rows_to_table( ls_values_part ).
     out->write( lv_append_result ).
@@ -340,16 +336,16 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
                               piezas                = 3
                               stock                 = 48
                               url                   = 'https://lalibreteria.mx/cdn/shop/products/la-libreteria-libretas-9x20-5-barcelona-02_700x.jpg?v=1648007109'
-                              total_price           = '290.00'
-                              price_piece           = '290.00'
+                              total_price           = '285.00'
+                              price_piece           = '285.00'
                               currency_code         = 'CLP'
                               measure_unit          = 'PCK'
                               quantity_per_unit     = 1
-                              local_created_by      = cl_abap_context_info=>get_user_technical_name( )
-                              local_created_at      = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }|
-                              local_last_changed_by = cl_abap_context_info=>get_user_technical_name( )
-                              local_last_changed_at = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }|
-                              last_change_at        = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }| ).
+                              local_created_by      = lv_user
+                              local_created_at      = lv_timestamp
+                              local_last_changed_by = lv_user
+                              local_last_changed_at = lv_timestamp
+                              last_change_at        = lv_timestamp ).
 
     lv_append_result = append_rows_to_table( ls_values_part ).
     out->write( lv_append_result ).
