@@ -1,0 +1,4 @@
+@EndUserText.label: 'zcds service definition arts parts'
+define service zcds_serdef_arts_parts {
+  expose zcds_arts_parts;
+}

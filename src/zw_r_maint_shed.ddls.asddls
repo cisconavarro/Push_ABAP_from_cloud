@@ -1,6 +1,6 @@
 @AbapCatalog.viewEnhancementCategory: [#NONE]
 @AccessControl.authorizationCheck: #NOT_REQUIRED
-@EndUserText.label: 'Vista raiz acercamiento a BD para tabla de mantenimiento'
+@EndUserText.label: 'Vista raiz'
 @Metadata.ignorePropagatedAnnotations: true
 @ObjectModel.usageType:{
     serviceQuality: #X,

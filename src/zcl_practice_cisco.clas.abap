@@ -33,9 +33,8 @@ CLASS zcl_practice_cisco DEFINITION
 * 01 Arithmetic Operations
       arithmetic_operations  IMPORTING iv_numer1        TYPE dmbtr
                                        iv_numer2        TYPE dmbtr
-                                       operator         TYPE char3
+                                       operator_sig     TYPE char3
                              RETURNING VALUE(rv_result) TYPE string,
-
 
 * 02 Insert Rows to Table
       append_rows_to_table IMPORTING is_values        TYPE zarts_parts
@@ -209,7 +208,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
     DATA(lv_result) = arithmetic_operations( iv_numer1 = 10
                                              iv_numer2 = 5
-                                             operator  = '+' ).
+                                             operator_sig  = '+' ).
 
     out->write( lv_result ).
 
@@ -223,7 +222,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     CLEAR lv_result.
     lv_result = arithmetic_operations( iv_numer1 = 43
                                        iv_numer2 = 34
-                                       operator  = '-' ).
+                                       operator_sig  = '-' ).
 
     out->write( lv_result ).
 
@@ -237,7 +236,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     CLEAR lv_result.
     lv_result = arithmetic_operations( iv_numer1 = 1432
                                        iv_numer2 = 34
-                                       operator  = '*' ).
+                                       operator_sig  = '*' ).
 
     out->write( lv_result ).
 
@@ -251,7 +250,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     CLEAR lv_result.
     lv_result = arithmetic_operations( iv_numer1 = 873
                                        iv_numer2 = 37
-                                       operator  = '/' ).
+                                       operator_sig  = '/' ).
 
     out->write( lv_result ).
 
@@ -264,7 +263,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     CLEAR lv_result.
     lv_result = arithmetic_operations( iv_numer1 = 873
                                        iv_numer2 = 37
-                                       operator  = 'DIV' ).
+                                       operator_sig  = 'DIV' ).
 
     out->write( lv_result ).
 
@@ -277,7 +276,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     CLEAR lv_result.
     lv_result = arithmetic_operations( iv_numer1 = 873
                                        iv_numer2 = 37
-                                       operator  = 'MOD' ).
+                                       operator_sig  = 'MOD' ).
 
     out->write( lv_result ).
 
@@ -290,7 +289,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     CLEAR lv_result.
     lv_result = arithmetic_operations( iv_numer1 = 3
                                        iv_numer2 = 9
-                                       operator  = '**' ).
+                                       operator_sig  = '**' ).
 
     out->write( lv_result ).
 
@@ -304,9 +303,14 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     DELETE FROM zarts_parts.
 ************ warning: This example will delete all rows in the table zarts_parts ************
 
-    DATA: ls_values_part TYPE ty_arts_parts.
-    DATA(lv_timestamp) = cl_abap_context_info=>get_system_date( ).
-    DATA(lv_user) = cl_abap_context_info=>get_user_technical_name( ).
+    DATA(ls_values_part) = VALUE ty_arts_parts( ).
+    DATA(lv_timestamp)   = VALUE timestamp( ).
+
+*   Get system date
+    lv_timestamp  = cl_abap_context_info=>get_system_date( ).
+
+*   Get system time
+    DATA(lv_time) = cl_abap_context_info=>get_system_time( ).
 
     ls_values_part = VALUE #( descr                 = 'Agenda 2025 Azul Aqua'
                               descr2                = 'Agenda 2025 Azul Aqua Hard Cover'
@@ -314,26 +318,38 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
                               piezas                = 10
                               stock                 = 123
                               url                   = 'https://lalibreteria.mx/cdn/shop/files/la-libreteria-agenda-2025-hard-cover-azul-aqua-03_700x.jpg?v=1720633282'
-                              created_by            = lv_user
-                              created_at            = lv_timestamp
-                              last_changed_by       = lv_user
-                              last_changed_at       = lv_timestamp ).
+                              total_price           = '200.00'
+                              price_piece           = '200.00'
+                              currency_code         = 'CLP'
+                              measure_unit          = 'FA'
+                              quantity_per_unit     = 1
+                              local_created_by      = cl_abap_context_info=>get_user_technical_name( )
+                              local_created_at      = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }|
+                              local_last_changed_by = cl_abap_context_info=>get_user_technical_name( )
+                              local_last_changed_at = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }|
+                              last_change_at        = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }| ).
 
     DATA(lv_append_result) = append_rows_to_table( ls_values_part ).
     out->write( lv_append_result ).
 
     CLEAR: ls_values_part, lv_append_result.
 
-    ls_values_part = VALUE #( descr                 = '2 Pack Libreta Barcelona'
-                              descr2                = '2 Pack Libreta Barcelona Refill'
+    ls_values_part = VALUE #( descr                 = '1 Pack Libreta Barcelona'
+                              descr2                = '1 Pack Libreta Barcelona Refill'
                               color                 = 'Marrón'
                               piezas                = 3
                               stock                 = 48
                               url                   = 'https://lalibreteria.mx/cdn/shop/products/la-libreteria-libretas-9x20-5-barcelona-02_700x.jpg?v=1648007109'
-                              created_by            = lv_user
-                              created_at            = lv_timestamp
-                              last_changed_by       = lv_user
-                              last_changed_at       = lv_timestamp ).
+                              total_price           = '290.00'
+                              price_piece           = '290.00'
+                              currency_code         = 'CLP'
+                              measure_unit          = 'PCK'
+                              quantity_per_unit     = 1
+                              local_created_by      = cl_abap_context_info=>get_user_technical_name( )
+                              local_created_at      = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }|
+                              local_last_changed_by = cl_abap_context_info=>get_user_technical_name( )
+                              local_last_changed_at = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }|
+                              last_change_at        = |{ lv_timestamp TIMESTAMP = ISO TIMEZONE = lv_time }| ).
 
     lv_append_result = append_rows_to_table( ls_values_part ).
     out->write( lv_append_result ).
@@ -344,7 +360,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
   METHOD arithmetic_operations.
 
-    CASE operator.
+    CASE operator_sig.
       WHEN '+'.
         rv_result = |Addition result: { iv_numer1 + iv_numer2 }|.
 
@@ -387,7 +403,7 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
   METHOD append_rows_to_table.
 
-    DATA(lt_arts_parts) = VALUE ty_t_zarts_parts( ).
+    DATA(ls_arts_parts) = VALUE ty_arts_parts( ).
 
     SELECT MAX( id_art ) AS max_id FROM zarts_parts INTO @DATA(lv_max_id).
     IF lv_max_id IS INITIAL.
@@ -396,21 +412,13 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
       lv_max_id = lv_max_id + 1.
     ENDIF.
 
-    APPEND VALUE #( client          = sy-mandt
-                    id_art          = |{ lv_max_id ALPHA = IN }|
-                    descr           = is_values-descr
-                    descr2          = is_values-descr2
-                    color           = is_values-color
-                    piezas          = is_values-piezas
-                    stock           = is_values-stock
-                    url             = is_values-url
-                    created_by      = is_values-created_by
-                    created_at      = is_values-created_at
-                    last_changed_by = is_values-last_changed_by
-                    last_changed_at = is_values-last_changed_at ) TO lt_arts_parts.
+    ls_arts_parts = CORRESPONDING #( is_values ).
+
+    ls_arts_parts-client = sy-mandt.
+    ls_arts_parts-id_art = |{ lv_max_id ALPHA = IN }|.
 
     TRY.
-        MODIFY zarts_parts FROM TABLE @lt_arts_parts.
+        MODIFY zarts_parts FROM @ls_arts_parts.
         COMMIT WORK AND WAIT.
         rv_result = |Row with ID { lv_max_id } inserted successfully|.
       CATCH cx_sy_dynamic_osql_error INTO DATA(ol_sql_error).
