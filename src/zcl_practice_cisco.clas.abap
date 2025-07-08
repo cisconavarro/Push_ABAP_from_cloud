@@ -160,6 +160,21 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     text = |USER Date:{ the_date DATE = USER }|. " External format
     out->write( text ).
 
+    out->write( 'Time' ).
+
+    CLEAR text.
+    DATA(lv_sys_time) = cl_abap_context_info=>get_system_time( ).
+    TRY.
+        cl_abap_timefm=>conv_time_int_to_ext(
+          EXPORTING
+            time_int            = lv_sys_time
+            without_seconds     = abap_false
+          IMPORTING
+            time_ext            = DATA(lv_time_ext) ).
+        out->write( |Formatted external time: { lv_time_ext }| ).
+      CATCH cx_parameter_invalid_range.
+    ENDTRY.
+
     out->write( 'Number' ).
 
     CLEAR text.
@@ -305,8 +320,23 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
     DATA(ls_values_part) = VALUE ty_arts_parts( ).
 
-    GET TIME STAMP FIELD DATA(lv_timestamp).
     DATA(lv_user) = cl_abap_context_info=>get_user_technical_name( ).
+    DATA(lv_date) = cl_abap_context_info=>get_system_date( ).
+    DATA(lv_time) = cl_abap_context_info=>get_system_time( ).
+
+    GET TIME STAMP FIELD DATA(lv_timestamp). " Get current timestamp
+
+    TRY. " Convert system timestamp to UTC
+        cl_abap_tstmp=>systemtstmp_syst2utc(
+          EXPORTING
+            syst_date       = lv_date
+            syst_time       = lv_time
+          IMPORTING
+            utc_tstmp       = DATA(lv_utc) ).
+      CATCH cx_parameter_invalid_range.
+        out->write( 'Error converting system timestamp to UTC' ).
+        RETURN.
+    ENDTRY.
 
     ls_values_part = VALUE #( descr                 = 'Agenda 2025 Azul Aqua'
                               descr2                = 'Agenda 2025 Azul Aqua Hard Cover'
