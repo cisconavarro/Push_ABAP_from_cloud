@@ -10,13 +10,15 @@ CLASS zcl_practice_cisco DEFINITION
 **********************
 
     TYPES: ty_amount     TYPE p LENGTH 8 DECIMALS 2.
-    TYPES: ty_arts_parts TYPE zarts_parts.
+    TYPES: ty_arts_parts TYPE zarts_parts,
+           ty_ztab_tavel TYPE ztab_tavel.
 
 **********************
 * TYPES TABLE DEFINITION
 **********************
 
-    TYPES: ty_t_zarts_parts TYPE STANDARD TABLE OF ty_arts_parts WITH DEFAULT KEY.
+    TYPES: ty_t_zarts_parts TYPE STANDARD TABLE OF ty_arts_parts WITH DEFAULT KEY,
+           ty_t_travel      TYPE STANDARD TABLE OF ty_ztab_tavel WITH DEFAULT KEY.
 
 **********************
 * INTERFACES DEFINITION
@@ -30,15 +32,18 @@ CLASS zcl_practice_cisco DEFINITION
 
     CLASS-METHODS:
 
-* 01 Arithmetic Operations
+* 01  Arithmetic Operations
       arithmetic_operations  IMPORTING iv_numer1        TYPE dmbtr
                                        iv_numer2        TYPE dmbtr
                                        operator_sig     TYPE char3
                              RETURNING VALUE(rv_result) TYPE string,
 
-* 02 Insert Rows to Table
+* 02  Append Rows to Table
       append_rows_to_table IMPORTING is_values        TYPE zarts_parts
-                           RETURNING VALUE(rv_result) TYPE string.
+                           RETURNING VALUE(rv_result) TYPE string,
+
+* 03  Insert rows to table
+      insert_rows_to_table RETURNING VALUE(rv_result) TYPE string.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -64,8 +69,8 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
     out->write( 'Example 2: Variable based on global type' ).
 
 *   Data declaration
-    DATA airport TYPE /dmo/airport_id VALUE 'FRA'.
-    out->write( airport ).
+    DATA lv_airport TYPE /dmo/airport_id VALUE 'FRA'.
+    out->write( lv_airport ).
 
     out->write( '**********************************************************************' ).
 
@@ -310,9 +315,9 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
     out->write( '**********************************************************************' ).
 
-* Example 16: Append rows to standart table
+* Example 16: Append rows to standard table
 **********************************************************************
-    out->write( 'Example 16: Append rows to standart table' ).
+    out->write( 'Example 16: Append rows to standard table' ).
 
 ************ warning: This example will delete all rows in the table zarts_parts ************
     DELETE FROM zarts_parts.
@@ -379,6 +384,15 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
 
     lv_append_result = append_rows_to_table( ls_values_part ).
     out->write( lv_append_result ).
+
+    out->write( '**********************************************************************' ).
+
+* Example 17: insert rows to standard table
+**********************************************************************
+    out->write( 'Example 17: insert rows to standard table' ).
+
+    DATA(lv_insert_result) = insert_rows_to_table( ).
+    out->write( lv_insert_result ).
 
     out->write( '**********************************************************************' ).
 
@@ -450,6 +464,46 @@ CLASS zcl_practice_cisco IMPLEMENTATION.
       CATCH cx_sy_dynamic_osql_error INTO DATA(ol_sql_error).
         rv_result = |Error inserting row: { ol_sql_error->get_text( ) }|.
     ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD insert_rows_to_table.
+
+************ warning: This example will delete all rows in the table ztab_tavel ************
+    DELETE FROM ztab_tavel.
+************ warning: This example will delete all rows in the table ztab_tavel ************
+
+************
+* We use the table '/dmo/travel' as the main data source for inserting records."
+************
+
+    INSERT ztab_tavel FROM ( SELECT FROM /dmo/travel FIELDS "client,
+                                                             uuid( )          AS travel_uuid,
+                                                             travel_id,
+                                                             agency_id,
+                                                             customer_id,
+                                                             begin_date,
+                                                             end_date,
+                                                             booking_fee,
+                                                             total_price,
+                                                             currency_code,
+                                                             description,
+                                                             CASE status
+                                                               WHEN 'B' THEN 'A'
+                                                               WHEN 'P' THEN 'O'
+                                                               WHEN 'N' THEN 'O'
+                                                               ELSE 'X'
+                                                             END AS overall_status,
+                                                             createdby     AS local_created_by,
+                                                             createdat     AS local_created_at,
+                                                             lastchangedby AS local_last_changed_by,
+                                                             lastchangedat AS local_last_changed_at,
+                                                             lastchangedat AS last_change_at ).
+    IF sy-subrc EQ 0.
+      rv_result = |Rows { sy-dbcnt } inserted successfully|.
+    ELSE.
+      rv_result = |Error inserting rows|.
+    ENDIF.
 
   ENDMETHOD.
 
