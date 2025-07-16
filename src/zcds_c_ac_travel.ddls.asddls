@@ -10,7 +10,12 @@ define root view entity zcds_c_ac_travel //Debe ser la entidad raíz de la proye
 {
   key TravelUUID,
       TravelID,
+
+      @Consumption.valueHelpDefinition: [{ entity: {    name: '/DMO/I_Agency_StdVH',
+                                                     element: 'AgencyID' },
+                                           useForValidation: true }]
       AgencyID,
+      
       CustomerID,
       BeginDate,
       EndDate,
@@ -21,7 +26,11 @@ define root view entity zcds_c_ac_travel //Debe ser la entidad raíz de la proye
       @Semantics.amount.currencyCode: 'CurrencyCode'
       TotalPrice,
 
+      @Consumption.valueHelpDefinition: [{ entity: {    name: 'I_CurrencyStdVH',
+                                                     element: 'Currency' },
+                                           useForValidation: true }]
       CurrencyCode,
+      
       Description,
       OverallStatus,
       LocalCreatedBy,
