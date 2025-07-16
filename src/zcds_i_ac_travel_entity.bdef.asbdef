@@ -1,23 +1,44 @@
-managed implementation in class zbp_cds_i_ac_travel_entity unique;
-// Clase BP = behavior pool para el CDS "zbp_cds_i_ac_travel_entity"
-// debemos crear la clase.
-strict ( 2 );
+managed implementation in class zbp_cds_i_ac_travel_entity unique; // Clase BP = behavior pool
+// para el CDS "zbp_cds_i_ac_travel_entity" debemos crear la clase. - agrega metodos adicionales para definiciones
+// de comportamiento de la entidad CDS, como por ejemplo, el método "create".
 
-define behavior for zcds_i_ac_travel_entity alias Travel //Alias name
-persistent table ztab_tavel
-lock master
+strict ( 2 ); // Comprueba las reglas de las ultimas versiones sintax de comportamiento.
+
+with draft; // Habilita la funcionabilidad de borrador "Draft".
+
+define behavior for zcds_i_ac_travel_entity alias Travel //Alias.
+
+persistent table ztab_tavel  // Tabla de persistencia BD.
+
+draft table ztab_tavel_d     // Tabla de borrador.
+
+etag master LocalLastChangedBy // Concurrencia para los servicios odata
+// y lo vinculamos con el campo de LocalLastChangedBy "modificado por" del
+// CDS raiz "Root".
+
+lock master total etag LastChangeAt // Concurrencia para los servicios odata
+// y lo vinculamos con el campo de LastChangeAt "fecha de ultima modificacion" del
+// CDS raiz "Root".
+
 authorization master ( instance )
-//etag master <field_name>
+
 {
   create ( authorization : global );
   update;
   delete;
 
-// en el "field ( readonly )" agregaremos la propiedad "numbering : managed " para
-// se generen de forma automática los IDs de los registros debido a la propiedad managed
+  // En el "field ( readonly )" agregaremos la propiedad "numbering : managed" para
+  // se generen de forma automática los IDs de los registros debido a la propiedad managed.
   field ( readonly, numbering : managed ) TravelUUID;
 
-  // los campos del CDS raiz serán iguales a los de la tabla de persistencia, es decir,
+  // Definiciones de draft action
+  draft action Activate optimized; // Activar el borrador en un escenario optimizado
+  draft action Discard;            // Descartar el borrador
+  draft action Edit;               // Editar el borrador
+  draft action Resume;             // Reanudar el borrador
+  draft determine action Prepare;  // Preparar el borrador
+
+  // Los campos del CDS raiz serán iguales a los de la tabla de persistencia, es decir,
   // campo CDS = campo tabla para realizar el mapeo.
   mapping for ztab_tavel corresponding
     {

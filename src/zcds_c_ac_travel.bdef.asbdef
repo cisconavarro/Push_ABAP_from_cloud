@@ -1,0 +1,25 @@
+projection;
+strict ( 2 );
+// Definición de comportamento "del tipo proyección"
+
+use draft; // Activamos draft
+use side effects; // Activamos efectos secundarios
+
+define behavior for zcds_c_ac_travel alias Travel
+{
+  use create;
+  use update;
+  use delete;
+
+  // podemos agregar nuevas acciones aquí
+  // nos ayuda a indicar o a restringir el uso de las acciones
+  // de la raiz
+
+  use action Edit;
+  use action Activate;
+  use action Discard;
+  use action Resume;
+  use action Prepare;
+
+
+}
